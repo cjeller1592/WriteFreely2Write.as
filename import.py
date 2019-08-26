@@ -3,17 +3,17 @@ import writefreely
 
 # PUT IN VALUES BEFORE RUNNING SCRIPT
 # WRITE.AS VALUES
-# Username and password for your Write.as account
+# Username and password for account
 username = ''
 password = ''
 # The Write.as slug for your blog - ex: write.as/matt -> 'matt'
 collection = ''
 
-# WRITEFREELY VALUES
+# WRITEFREELY VALUES (already filled in for Bix)
 # Domain of the WriteFreely instance - ex: write.house/bix -> 'write.house'
-domain = ''
+domain = 'write.house'
 # The WriteFreely slug for the blog = ex: write.house/bix -> 'bix'
-wfcollection = ''
+wfcollection = 'bix'
 
 # Instanciate Write.as Client
 c = writeas.client()
@@ -50,6 +50,27 @@ for p in list:
 
     c.createCPost(collection, body, title, created=created, tags=tags)
 
+# Section specifically for Bix - pinned posts...
+# list of the pinned posts for Bix's blog, in order
+pinlist = ['about', 'support', 'contact', 'archives']
+
+for x in pinlist:
+    p = wf.retrieveCPost(wfcollection, '{}'.format(x))
+
+    title = p['title']
+    body = p['body']
+    position = pinlist.index(x) + 1
+
+# Create the post
+    post = c.createCPost(collection, body=body, title=title)
+
+    id = post['id']
+
+ # Then pin the post
+    c.pinPost(collection, id, position)
+
+    
 coll = c.retrieveCollection(collection)
 
+# Print out the post after the import is successful
 print('Finished! Below is your imported blog\n\n{}'.format(coll))
